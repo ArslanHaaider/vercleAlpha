@@ -4,10 +4,10 @@ const mime = require('mime-types')
 const path = require("path")
 const fs = require('fs')
 const s3Client = new S3Client({
-    region: 'ap-south-1',
+    region: ' us-east-1',
     credentials: {
-        accessKeyId: '<YOUR_AwsAccessKey_HERE>',
-        secretAccessKey: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        accessKeyId: 'AKIAUNTNC7NQUV2V6IMT',
+        secretAccessKey: 'S+FyrU+ZN57l1+RST5xuWW37qT1b0smniEDwcjEn'
     }
 })
 const PROJECT_ID = process.env.PROJECT_ID;
@@ -33,9 +33,9 @@ async function init() {
         for (const file of distFolderContents) {
             const filePath = path.join(distFolderPath, file)
             if (fs.lstatSync(filePath).isDirectory()) continue
-            console.log(filePath)
+            console.log("uploading",filePath)
             const command = new PutObjectCommand({
-                Bucket: 'XXXXXXXXXXXX',
+                Bucket: 'vercelalpha',
                 Key: `__outputs/${PROJECT_ID}/${file}`,
                 Body: fs.createReadStream(filePath),
                 ContentType: mime.lookup(filePath)
