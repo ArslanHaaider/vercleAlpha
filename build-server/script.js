@@ -7,8 +7,8 @@ const fs = require('fs');
 const s3Client = new S3Client({
     region: 'ap-south-1',
     credentials: {
-        accessKeyId: 'AKIATHVQK3H7LBS2WVWU',
-        secretAccessKey: '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'
+        accessKeyId: '',
+        secretAccessKey: ''
     }
 });
 const PROJECT_ID = process.env.PROJECT_ID;
