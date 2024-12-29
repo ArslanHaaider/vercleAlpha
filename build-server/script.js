@@ -102,11 +102,6 @@ async function buildAndUpload() {
 
             for (const file of distFolderContents) {
                 const filePath = path.join(distFolderPath, file.name);
-                if (file.isDirectory()) {
-                    console.log("Skipping directory:", file.name);
-                    continue;
-                }
-
                 console.log("Uploading:", filePath);
 
                 const command = new PutObjectCommand({
