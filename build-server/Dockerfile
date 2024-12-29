@@ -1,23 +1,33 @@
 FROM ubuntu:focal
 
-RUN apt-get update
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt install -y nodejs npm
+# Install Node.js
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
-RUN apt-get install git -y
-
+# Create app directory and set permissions
 WORKDIR /home/app
+RUN mkdir -p /home/app/output && \
+    chmod 777 /home/app/output
 
-COPY main.sh main.sh
+# Copy files
 COPY script.js script.js
-COPY package.json package.json
+COPY package*.json .
 
+# Install dependencies
+RUN npm install --no-cache
 
-RUN npm install
-
-RUN chmod +x main.sh
+# Set permissions
 RUN chmod +x script.js
 
+# Set the working directory for subsequent commands
+WORKDIR /home/app
 
-
-ENTRYPOINT [ "/home/app/main.sh" ]
+# Directly run the Node.js script
+CMD ["node", "script.js"]
