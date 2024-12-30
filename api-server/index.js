@@ -1,29 +1,17 @@
 const express = require("express")
-const httpProxy = require("http-proxy")
 const app = express()
 const slug = require('random-word-slugs')
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 9000
 const {ECSClient,RunTaskCommand} = require("@aws-sdk/client-ecs")
-const BasePath = "https://vercel-alpha.s3.ap-south-1.amazonaws.com/__outputs"
-
 const ecsClient = new ECSClient({
     region: 'ap-south-1',
     credentials: {
-        accessKeyId: 'AKIATHVQK3H7LBS2WVWU',
-        secretAccessKey: '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'
+        accessKeyId: '',
+        secretAccessKey: ''
     }
 })
 
-const proxy = httpProxy.createProxy();
-app.use((req,res)=>{
-    const hostname = req.hostname
-    console.log(hostname)
-    const subDomain = hostname.split('.')[0];
-    const resolvesTo = `${BasePath}/${subDomain}`
-    console.log(resolvesTo)
-    return proxy.web(req, res, {target: resolvesTo,changeOrigin:true})
 
-})
 
 app.post('/project',async (req,res)=>{
     const {gitUrl} = req.body

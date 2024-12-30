@@ -4,6 +4,7 @@ const mime = require('mime-types');
 const path = require("path");
 const fs = require('fs');
 
+
 const s3Client = new S3Client({
     region: 'ap-south-1',
     credentials: {
@@ -102,6 +103,7 @@ async function buildAndUpload() {
 
             for (const file of distFolderContents) {
                 const filePath = path.join(distFolderPath, file.name);
+
                 console.log("Uploading:", filePath);
 
                 const command = new PutObjectCommand({

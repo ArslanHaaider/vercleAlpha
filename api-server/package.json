@@ -1,5 +1,5 @@
 {
-  "name": "s3-reverse-proxy",
+  "name": "api-server",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,8 +10,6 @@
   "description": "",
   "dependencies": {
     "@aws-sdk/client-ecs": "^3.716.0",
-    "express": "^4.21.2",
-    "http-proxy": "^1.18.1",
     "random-word-slugs": "^0.1.7"
   }
 }
