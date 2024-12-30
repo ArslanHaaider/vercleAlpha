@@ -2,18 +2,26 @@ const { exec } = require("child_process");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const mime = require('mime-types');
 const path = require("path");
+const Redis = require("ioredis");
+
+const PROJECT_ID = process.env.PROJECT_ID;
+const GIT_REPO = process.env.GIT_REPOSITORY_URL;
+
 const fs = require('fs');
+const REDIS_URL = process.env.REDIS_URL| "rediss://default:AVNS_-jLV1xqyordQBmOwVBs@valkey-3c06d941-vercel-clone-alpha.h.aivencloud.com:27735"
 
+const publish = new Redis(REDIS_URL);
 
+const publishLog = (log) => {
+    publish.publish(`logs:${PROJECT_ID}`, JSON.stringify({log}));
+};
 const s3Client = new S3Client({
     region: 'ap-south-1',
     credentials: {
-        accessKeyId: '',
-        secretAccessKey: ''
+        accessKeyId: 'AKIATHVQK3H7LBS2WVWU',
+        secretAccessKey: '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'
     }
 });
-const PROJECT_ID = process.env.PROJECT_ID;
-const GIT_REPO = process.env.GIT_REPOSITORY_URL;
 
 async function runCommand(command, cwd) {
     return new Promise((resolve, reject) => {
@@ -60,14 +68,18 @@ async function initializeDirectory() {
         fs.mkdirSync(outDirPath, { recursive: true });
     }
 
+    publishLog("Directory structure initialized.")
     // Clone the repository
     if (!GIT_REPO) {
         throw new Error("GIT_REPOSITORY_URL environment variable is not set");
     }
 
+    publishLog("Cloning Repo")
+
     console.log("Cloning repository...");
     await runCommand(`git clone ${GIT_REPO} .`, outDirPath);
     
+    publishLog('Cloned Repo')
     return outDirPath;
 }
 
@@ -100,12 +112,12 @@ async function buildAndUpload() {
             console.log("Contents of dist folder:", fs.readdirSync(distFolderPath));
 
             const distFolderContents = fs.readdirSync(distFolderPath, { withFileTypes: true });
-
+            publishLog("uploading files")
             for (const file of distFolderContents) {
                 const filePath = path.join(distFolderPath, file.name);
 
                 console.log("Uploading:", filePath);
-
+                publishLog(`uploading file ${filePath}`)
                 const command = new PutObjectCommand({
                     Bucket: 'vercel-alpha',
                     Key: `__outputs/${PROJECT_ID}/${file.name}`,
@@ -114,9 +126,11 @@ async function buildAndUpload() {
                 });
 
                 await s3Client.send(command);
+                publishLog()
             }
 
             console.log("All files uploaded successfully.");
+            publishLog("Build and upload completed successfully.");
         } catch (error) {
             console.error("Detailed error:", error);
             throw error;
@@ -130,6 +144,7 @@ async function buildAndUpload() {
 async function init() {
     console.log("Starting init...");
     await buildAndUpload();
+    
 }
 
 init().catch(err => {

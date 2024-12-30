@@ -9,8 +9,8 @@ const BasePath = "https://vercel-alpha.s3.ap-south-1.amazonaws.com/__outputs"
 const ecsClient = new ECSClient({
     region: 'ap-south-1',
     credentials: {
-        accessKeyId: 'AKIATHVQK3H7LBS2WVWU',
-        secretAccessKey: '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'
+        accessKeyId: '',
+        secretAccessKey: ''
     }
 })
 
